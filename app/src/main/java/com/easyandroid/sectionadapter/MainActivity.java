@@ -23,13 +23,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout
-        .OnRefreshListener, Module.View {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Module.View {
 
     @BindView(R.id.swip_root)
     SwipeRefreshLayout refreshLayout;
-    @BindView(R.id.rv)
-    RecyclerView rv;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
 
     private TestAdapter mAdapter;
     private GridLayoutManager mGridLayoutManager;
@@ -53,12 +52,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private void initAdapter() {
         mAdapter = new TestAdapter(mDatas, this);
         mGridLayoutManager = new GridLayoutManager(this, 3);
-        mGridLayoutManager.setSpanSizeLookup(new SectionedSpanSizeLookup(mAdapter,
-                mGridLayoutManager));
-        rv.setLayoutManager(mGridLayoutManager);
-        rv.setAdapter(mAdapter);
+
+        // 每行显示多少条，因为有头部视图，所以需要些这个
+        mGridLayoutManager.setSpanSizeLookup(new SectionedSpanSizeLookup(mAdapter,mGridLayoutManager));
+        recyclerView.setLayoutManager(mGridLayoutManager);
+        recyclerView.setAdapter(mAdapter);
         mDivider = new SectionedGridDivider(this, 50, Color.parseColor("#F5F5F5"));
-        rv.addItemDecoration(mDivider);
+        recyclerView.addItemDecoration(mDivider);
 
         loadMoreListener = new LoadMoreListener(mGridLayoutManager) {
             @Override
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 }, 1000);
             }
         };
-        rv.setOnScrollListener(loadMoreListener);
+        recyclerView.setOnScrollListener(loadMoreListener);
 
         refreshLayout.setOnRefreshListener(this);
 
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mAdapter.getData().clear();
                 mAdapter.notifyDataSetChanged();
                 mAdapter.addMoreData(datas);
-                if (loadMoreListener.isFullAScreen(rv)) {//显示item满一屏了
+                if (loadMoreListener.isFullAScreen(recyclerView)) {//显示item满一屏了
                     mAdapter.changeMoreStatus(SectionedRecyclerViewAdapter.PULLUP_LOAD_MORE);
                 } else {
                     mAdapter.changeMoreStatus(SectionedRecyclerViewAdapter.LOADING_FINISH);

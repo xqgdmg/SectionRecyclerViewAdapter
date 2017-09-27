@@ -8,6 +8,7 @@ import android.view.View;
  * package: com.easyandroid.sectionadapter.listener.LoadMoreListener
  * author: gyc
  * description:继承Recyclerview的滚动事件，实现上拉加载
+ * 判断了是否全屏，是否在等待的状态下
  * time: create at 2017/7/7 22:23
  */
 
@@ -15,9 +16,8 @@ public abstract class LoadMoreListener extends RecyclerView.OnScrollListener {
 
     public boolean isLoading = false;//记录正在加载的状态，防止多次请求
     protected int lastItemPosition;
-    private int topOffset = 0;//列表顶部容差值
-    private int bottomOffset = 0;//列表底部容差值
-
+    private int topOffset = 0;//列表顶部容差值，这个有什么卵用？
+    private int bottomOffset = 0;//列表底部容差值，这个有什么卵用？
     protected GridLayoutManager gridLayoutManager;
 
     public LoadMoreListener(GridLayoutManager gridLayoutManager) {
@@ -30,8 +30,7 @@ public abstract class LoadMoreListener extends RecyclerView.OnScrollListener {
         if (isFullAScreen(recyclerView)) {
             //查找最后一个可见的item的position
             lastItemPosition = gridLayoutManager.findLastVisibleItemPosition();
-            if (newState == RecyclerView.SCROLL_STATE_IDLE && lastItemPosition + 1 ==
-                    gridLayoutManager.getItemCount()) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE && lastItemPosition + 1 == gridLayoutManager.getItemCount()) {
                 if (!isLoading) {
                     onLoadMore();
                 }
